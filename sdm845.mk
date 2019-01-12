@@ -107,6 +107,10 @@ PRODUCT_BOOT_JARS += \
 PRODUCT_PACKAGES += \
     textclassifier.bundle1
 
+# XiaomiParts
+PRODUCT_PACKAGES += \
+    XiaomiParts
+
 # VNDK-SP
 PRODUCT_PACKAGES += \
     vndk-sp
