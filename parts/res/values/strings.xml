@@ -16,7 +16,7 @@
 <resources>
     <string name="app_name">XiaomiParts</string>
     <string name="advanced_settings">Xiaomi Parts</string>
-    <string name="advanced_settings_summary">Advanced</string>
+    <string name="advanced_settings_summary">Advanced Settings</string>
     <string name="camera_title">Camera</string>
     <string name="camera_hal3_title">Enable Camera2 API</string>
 </resources>
