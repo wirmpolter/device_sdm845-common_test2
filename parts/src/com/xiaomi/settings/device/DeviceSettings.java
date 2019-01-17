@@ -1,60 +1,55 @@
 /*
-* Copyright (C) 2018 The Mokee Project
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+ * Copyright (C) 2018 The Xiaomi-SDM660 Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
 package com.xiaomi.settings.device;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.SystemProperties;
 import android.support.v14.preference.PreferenceFragment;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.preference.PreferenceScreen;
-import android.support.v14.preference.SwitchPreference;
-import android.provider.Settings;
-import android.view.View;
-import android.util.Log;
 
 import com.xiaomi.settings.R;
 
 public class DeviceSettings extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener {
 
-    private static final String KEY_CATEGORY_CAMERA = "camera";
-    private static final String ENABLE_HAL3_KEY = "hal3";
+    private final String ENABLE_HAL3_KEY = "hal3";
+    private final String ENABLE_EIS_KEY = "eis";
 
-    private static final String HAL3_SYSTEM_PROPERTY = "persist.camera.HAL3.enabled";
+    private final String HAL3_SYSTEM_PROPERTY = "persist.camera.HAL3.enabled";
+    private final String EIS_SYSTEM_PROPERTY = "persist.camera.eis.enable";
 
     private SwitchPreference mEnableHAL3;
+    private SwitchPreference mEnableEIS;
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.main, rootKey);
         mEnableHAL3 = (SwitchPreference) findPreference(ENABLE_HAL3_KEY);
-        mEnableHAL3.setChecked(SystemProperties.getBoolean(HAL3_SYSTEM_PROPERTY, false));
+        mEnableHAL3.setChecked(FileUtils.getProp(HAL3_SYSTEM_PROPERTY, false));
         mEnableHAL3.setOnPreferenceChangeListener(this);
+
+        mEnableEIS = (SwitchPreference) findPreference(ENABLE_EIS_KEY);
+        mEnableEIS.setChecked(FileUtils.getProp(EIS_SYSTEM_PROPERTY, false));
+        mEnableEIS.setOnPreferenceChangeListener(this);
+
     }
 
-   private void setEnableHAL3(boolean value) {
-        if(value) {
-            SystemProperties.set(HAL3_SYSTEM_PROPERTY, "1");
-        } else {
-            SystemProperties.set(HAL3_SYSTEM_PROPERTY, "0");
-        }
-    }
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
@@ -62,17 +57,33 @@ public class DeviceSettings extends PreferenceFragment implements
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
+    public boolean onPreferenceChange(Preference preference, Object value) {
         final String key = preference.getKey();
-        boolean value;
-        String strvalue;
-        if (ENABLE_HAL3_KEY.equals(key)) {
-            value = (Boolean) newValue;
-            mEnableHAL3.setChecked(value);
-            setEnableHAL3(value);
-            return true;
+        switch (key) {
+            case ENABLE_HAL3_KEY:
+                mEnableHAL3.setChecked((Boolean) value);
+                FileUtils.setProp(HAL3_SYSTEM_PROPERTY, (Boolean) value);
+                break;
+
+            case ENABLE_EIS_KEY:
+                mEnableEIS.setChecked((Boolean) value);
+                FileUtils.setProp(EIS_SYSTEM_PROPERTY, (Boolean) value);
+                break;
+
+            default:
+                break;
         }
         return true;
     }
 
+    private boolean isAppInstalled(String uri) {
+        PackageManager packageManager = DeviceSettingsActivity.getContext().getPackageManager();
+        try {
+            packageManager.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            // Throw it far away
+            return false;
+        }
+    }
 }

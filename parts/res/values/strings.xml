@@ -19,10 +19,11 @@
     <string name="advanced_settings_summary">Advanced Settings</string>
     <string name="camera_title">Camera</string>
     <string name="camera_hal3_title">Enable Camera2 API</string>
+    <string name="camera_eis_title">Enable EIS</string>
 
     <!-- Doze services -->
     <string name="xiaomidoze_display_title">Doze</string>
-    <string name="xiaomidoze_display_summary">Ambient Display Settings</string>
+    <string name="xiaomidoze_display_summary">Screen Notifications</string>
     <string name="ambient_display_title">Ambient display</string>
     <string name="ambient_display_summary">Wake screen when you receive notifications</string>
 

@@ -1,1 +1,2 @@
 persist.camera.HAL3.enable         u:object_r:camera_prop:s0
+persist.camera.eis.enable          u:object_r:camera_prop:s0
