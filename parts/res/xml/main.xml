@@ -24,4 +24,18 @@
             android:title="@string/camera_hal3_title" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+            android:title="@string/xiaomidoze_display_title"
+            android:key="xiaomidoze_display" >
+
+        <Preference
+            android:summary="@string/xiaomidoze_display_summary"
+            android:persistent="false" >
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetClass="com.xiaomi.settings.doze.DozeSettings"
+                android:targetPackage="com.xiaomi.settings" />
+        </Preference>
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.xiaomi.device"
+    package="com.xiaomi.settings"
     android:sharedUserId="android.uid.system" >
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.INJECT_EVENTS" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <protected-broadcast android:name="com.android.systemui.doze.pulse" />
 
     <uses-sdk
         android:minSdkVersion="27"
@@ -14,8 +17,18 @@
         android:label="@string/advanced_settings"
         android:theme="@style/AppTheme"
         android:supportsRtl="true" >
+        <receiver android:name=".BootCompletedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".doze.DozeService"
+                 android:permission="XiaomiDozeService">
+        </service>
         <activity
-            android:name=".DeviceSettingsActivity"
+            android:name=".device.DeviceSettingsActivity"
             android:exported="false"
             android:label="@string/advanced_settings"
             android:icon="@drawable/ic_mi"
@@ -36,29 +49,34 @@
                 android:resource="@string/advanced_settings_summary" />
         </activity>
         <activity-alias
-            android:name="com.xiaomi.device.DeviceSettings"
+            android:name=".device.DeviceSettings"
             android:icon="@drawable/ic_mi"
             android:exported="true"
             android:label="@string/advanced_settings"
-            android:targetActivity="DeviceSettingsActivity" >
+            android:targetActivity=".device.DeviceSettingsActivity" >
             <intent-filter>
-                <action android:name="com.android.settings.action.EXTRA_SETTINGS" />
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+              <meta-data 
+                android:name="com.android.settings.dismiss"
+                android:value="9,13,30" />
               <meta-data
-                 android:name="com.android.settings.dismiss"
-                 android:value="9,13,30" />
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.homepage" />
               <meta-data
-                 android:name="com.android.settings.category"
-                 android:value="com.android.settings.category.ia.homepage" />
-               <meta-data
-                 android:name="com.android.settings.summary"
-                 android:resource="@string/advanced_settings_summary" />
+                android:name="com.android.settings.summary"
+                android:resource="@string/advanced_settings_summary" />
         </activity-alias>
-        <receiver android:name="com.xiaomi.device.Startup" >
-            <intent-filter android:priority="100">
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <activity
+            android:name=".doze.DozeSettings"
+            android:exported="false"
+            android:label="@string/xiaomidoze_display_title"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </receiver>
+        </activity>
     </application>
 </manifest>
